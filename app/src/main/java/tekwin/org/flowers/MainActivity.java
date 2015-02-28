@@ -1,5 +1,8 @@
 package tekwin.org.flowers;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,19 +52,34 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            MyTask task = new MyTask();
-            //Parallel Task Processing
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "Param 1", "Param 2", "Param 3");
+            if (isOnline()) {
+                requestData();
+            }else
+            {
+                Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();
+            }
 
         }
 
         return false;
     }
 
+    private void requestData() {
+        MyTask task = new MyTask();
+        //Parallel Task Processing
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "Param 1", "Param 2", "Param 3");
+    }
+
     protected void updateDisplay(String message) {
         output.append(message +"\n");
     }
+    // check whether Network connectivity available.
+    private  boolean isOnline(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
 
     private class MyTask extends AsyncTask<String,String,String> {
 
