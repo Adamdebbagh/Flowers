@@ -1,16 +1,20 @@
 package tekwin.org.flowers;
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
 
     TextView output;
+    ProgressBar pb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,26 +22,26 @@ public class MainActivity extends ActionBarActivity {
 
         output =(TextView)findViewById(R.id.textView);
         output.setMovementMethod(new ScrollingMovementMethod());
+        pb = (ProgressBar)findViewById(R.id.progressBar);
+        pb.setVisibility(View.INVISIBLE);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            updateDisplay("Task Done!");
+            MyTask task = new MyTask();
+            task.execute("Param 1","Param 2","Param 3");
 
         }
 
@@ -46,5 +50,47 @@ public class MainActivity extends ActionBarActivity {
 
     protected void updateDisplay(String message) {
         output.append(message +"\n");
+    }
+
+
+    private class MyTask extends AsyncTask<String,String,String> {
+
+
+        @Override
+        protected void onPreExecute() {
+
+            updateDisplay("Starting Task...");
+            pb.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            for (int i = 0; i <params.length ; i++) {
+
+                publishProgress("working in Progress with : " + params[i]);
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return "Task Complete";
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+           updateDisplay(result);
+            pb.setVisibility(View.INVISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+
+            updateDisplay(values[0]);
+        }
     }
 }
