@@ -1,4 +1,4 @@
-package tekwin.org.flowers;
+package tekwin.org.catalog;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -17,12 +17,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import tekwin.org.model.Flower;
+
 
 public class MainActivity extends ActionBarActivity {
 
     TextView output;
     ProgressBar pb;
     List<MyTask> tasks;
+    List<Flower> flowerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

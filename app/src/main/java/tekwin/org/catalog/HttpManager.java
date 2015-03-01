@@ -1,4 +1,4 @@
-package tekwin.org.flowers;
+package tekwin.org.catalog;
 
 import java.io.BufferedReader;
 import java.io.IOException;

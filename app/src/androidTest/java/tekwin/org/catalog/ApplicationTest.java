@@ -1,4 +1,4 @@
-package tekwin.org.flowers;
+package tekwin.org.catalog;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
