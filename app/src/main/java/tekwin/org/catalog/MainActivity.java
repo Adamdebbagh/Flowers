@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tekwin.org.model.Flower;
+import tekwin.org.parsers.FlowerXMLParser;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -73,8 +74,13 @@ public class MainActivity extends ActionBarActivity {
         task.execute(uri);
     }
 
-    protected void updateDisplay(String message) {
-        output.append(message +"\n");
+    protected void updateDisplay() {
+        if (flowerList != null) {
+            for (Flower flower : flowerList) {
+                output.append( flower.getName() +"\n");
+            }
+        }
+
     }
     // check whether Network connectivity available.
     private  boolean isOnline(){
@@ -90,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPreExecute() {
 
-            updateDisplay("Starting Task...");
+            //updateDisplay("Starting Task...");
             if ( tasks.size() == 0) {
                 pb.setVisibility(View.VISIBLE);
             }
@@ -109,7 +115,9 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(String result) {
-           updateDisplay(result);
+
+            flowerList = FlowerXMLParser.parseFeed(result);
+            updateDisplay();
 
             tasks.remove(this);
             if (tasks.size() == 0) {
@@ -120,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onProgressUpdate(String... values) {
 
-            updateDisplay(values[0]);
+            updateDisplay();
         }
     }
 }
