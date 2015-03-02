@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tekwin.org.model.Flower;
-import tekwin.org.parsers.FlowerXMLParser;
+import tekwin.org.parsers.FlowerJSONParser;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_get_data) {
             if (isOnline()) {
-                requestData("http://services.hanselandpetal.com/feeds/flowers.xml");
+                requestData("http://services.hanselandpetal.com/feeds/flowers.json");
             }else
             {
                 Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();
@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String result) {
 
-            flowerList = FlowerXMLParser.parseFeed(result);
+            flowerList = FlowerJSONParser.parseFeed(result);
             updateDisplay();
 
             tasks.remove(this);
