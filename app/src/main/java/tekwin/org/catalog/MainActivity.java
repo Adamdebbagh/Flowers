@@ -6,12 +6,11 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,18 +22,18 @@ import tekwin.org.parsers.FlowerJSONParser;
 
 public class MainActivity extends ActionBarActivity {
 
-    TextView output;
+
     ProgressBar pb;
     List<MyTask> tasks;
     List<Flower> flowerList;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        output =(TextView)findViewById(R.id.textView);
-        output.setMovementMethod(new ScrollingMovementMethod());
+        listView = (ListView) findViewById(R.id.list);
         pb = (ProgressBar)findViewById(R.id.progressBar);
         pb.setVisibility(View.INVISIBLE);
 
@@ -70,18 +69,16 @@ public class MainActivity extends ActionBarActivity {
 
     private void requestData(String uri) {
         MyTask task = new MyTask();
-        //Parallel Task Processing
         task.execute(uri);
     }
 
     protected void updateDisplay() {
-        if (flowerList != null) {
-            for (Flower flower : flowerList) {
-                output.append( flower.getName() +"\n");
-            }
-        }
-
+        // use Flower Adapter to display data
+        FlowerAdapter adapter = new FlowerAdapter(this, R.layout.item_flower, flowerList);
+        //ListView listView = (ListView) findViewById(R.id.list);
+        listView.setAdapter(adapter);
     }
+
     // check whether Network connectivity available.
     private  boolean isOnline(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -131,10 +128,6 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        @Override
-        protected void onProgressUpdate(String... values) {
 
-            updateDisplay();
-        }
     }
 }
