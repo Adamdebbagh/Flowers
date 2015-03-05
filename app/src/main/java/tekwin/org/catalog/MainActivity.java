@@ -1,6 +1,8 @@
 package tekwin.org.catalog;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,6 +15,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,9 @@ import tekwin.org.parsers.FlowerJSONParser;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    public static final String PHOTOS_BASE_URL = "http://services.hanselandpetal.com/photos/";
+
 
 
     ProgressBar pb;
@@ -87,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    private class MyTask extends AsyncTask<String,String,String> {
+    private class MyTask extends AsyncTask<String,String,List<Flower>> {
 
 
         @Override
@@ -102,16 +109,33 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected List<Flower> doInBackground(String... params) {
 
            String content = HttpManager.getData(params[0],"feeduser","feedpassword");
+            flowerList = FlowerJSONParser.parseFeed(content);
 
-            return content;
+            for (Flower flower :flowerList) {
+
+                try {
+                    String imageUrl = PHOTOS_BASE_URL + flower.getPhoto();
+                    InputStream in = (InputStream) new URL(imageUrl).getContent();
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                    flower.setBitmap(bitmap);
+                    in.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+
+                }
+
+            }
+
+
+            return flowerList;
         }
 
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(List<Flower> result) {
             tasks.remove(this);
             if (tasks.size() == 0) {
                 pb.setVisibility(View.INVISIBLE);
@@ -122,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
                 return;
             }
 
-            flowerList = FlowerJSONParser.parseFeed(result);
+
             updateDisplay();
 
 

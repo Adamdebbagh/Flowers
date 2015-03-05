@@ -56,7 +56,7 @@ public class FlowerAdapter extends ArrayAdapter<Flower> {
             holder = (ViewHolder) convertView.getTag();
         }
             holder.floweTitle.setText(flower.getName());
-            //holder.flowerImage.setImageResource(flower.getPhoto());
+            holder.flowerImage.setImageBitmap(flower.getBitmap());
             return convertView;
     }
 }
