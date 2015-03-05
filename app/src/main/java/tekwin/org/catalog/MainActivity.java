@@ -1,8 +1,6 @@
 package tekwin.org.catalog;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -15,8 +13,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
            String content = HttpManager.getData(params[0],"feeduser","feedpassword");
             flowerList = FlowerJSONParser.parseFeed(content);
 
-            for (Flower flower :flowerList) {
+            /*for (Flower flower :flowerList) {
 
                 try {
                     String imageUrl = PHOTOS_BASE_URL + flower.getPhoto();
@@ -127,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
 
                 }
 
-            }
+            }*/
 
 
             return flowerList;
