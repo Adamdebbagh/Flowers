@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_get_data) {
             if (isOnline()) {
-                requestData("http://services.hanselandpetal.com/feeds/flowers.xml");
+                requestData("http://services.hanselandpetal.com/feeds/flowers.json");
             }else
             {
                 Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();
