@@ -3,7 +3,6 @@ package tekwin.org.catalog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,7 +12,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import java.util.List;
 
 import tekwin.org.model.Flower;
@@ -27,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     ProgressBar pb;
-    List<MyTask> tasks;
+
     List<Flower> flowerList;
     ListView listView;
 
@@ -40,7 +44,7 @@ public class MainActivity extends ActionBarActivity {
         pb = (ProgressBar)findViewById(R.id.progressBar);
         pb.setVisibility(View.INVISIBLE);
 
-        tasks = new ArrayList<>();
+
 
     }
 
@@ -59,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_get_data) {
             if (isOnline()) {
-                requestData("http://services.hanselandpetal.com/secure/flowers.json");
+                requestData("http://services.hanselandpetal.com/feeds/flowers.json");
             }else
             {
                 Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();
@@ -71,8 +75,27 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void requestData(String uri) {
-        MyTask task = new MyTask();
-        task.execute(uri);
+        StringRequest request = new StringRequest(uri,
+
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        flowerList = FlowerJSONParser.parseFeed(response);
+                        updateDisplay();
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError ex) {
+                        Toast.makeText(MainActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(request);
+
     }
 
     protected void updateDisplay() {
@@ -90,64 +113,4 @@ public class MainActivity extends ActionBarActivity {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    private class MyTask extends AsyncTask<String,String,List<Flower>> {
-
-
-        @Override
-        protected void onPreExecute() {
-
-            //updateDisplay("Starting Task...");
-            if ( tasks.size() == 0) {
-                pb.setVisibility(View.VISIBLE);
-            }
-            tasks.add(this);
-
-        }
-
-        @Override
-        protected List<Flower> doInBackground(String... params) {
-
-           String content = HttpManager.getData(params[0],"feeduser","feedpassword");
-            flowerList = FlowerJSONParser.parseFeed(content);
-
-            /*for (Flower flower :flowerList) {
-
-                try {
-                    String imageUrl = PHOTOS_BASE_URL + flower.getPhoto();
-                    InputStream in = (InputStream) new URL(imageUrl).getContent();
-                    Bitmap bitmap = BitmapFactory.decodeStream(in);
-                    flower.setBitmap(bitmap);
-                    in.close();
-                }catch (Exception e){
-                    e.printStackTrace();
-
-                }
-
-            }*/
-
-
-            return flowerList;
-        }
-
-
-        @Override
-        protected void onPostExecute(List<Flower> result) {
-            tasks.remove(this);
-            if (tasks.size() == 0) {
-                pb.setVisibility(View.INVISIBLE);
-            }
-
-            if (result == null){
-                Toast.makeText(MainActivity.this,"Can't connect to web Service",Toast.LENGTH_LONG).show();
-                return;
-            }
-
-
-            updateDisplay();
-
-
-        }
-
-
-    }
 }
