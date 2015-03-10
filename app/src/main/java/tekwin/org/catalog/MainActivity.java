@@ -12,22 +12,19 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import tekwin.org.model.Flower;
-import tekwin.org.parsers.FlowerJSONParser;
 
 
 public class MainActivity extends ActionBarActivity {
 
     public static final String PHOTOS_BASE_URL = "http://services.hanselandpetal.com/photos/";
-
+    public static final String ENDPOINT = "http://services.hanselandpetal.com";
 
 
     ProgressBar pb;
@@ -43,8 +40,6 @@ public class MainActivity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.list);
         pb = (ProgressBar)findViewById(R.id.progressBar);
         pb.setVisibility(View.INVISIBLE);
-
-
 
     }
 
@@ -75,27 +70,23 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void requestData(String uri) {
-        StringRequest request = new StringRequest(uri,
+        RestAdapter adapter = new RestAdapter.Builder()
+                .setEndpoint(ENDPOINT)
+                .build();
+        FlowersApi api = adapter.create(FlowersApi.class);
+        api.getFeed(new Callback<List<Flower>>() {
+            @Override
+            public void success(List<Flower> flowers, Response response) {
+                flowerList = flowers;
+                updateDisplay();
+            }
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        flowerList = FlowerJSONParser.parseFeed(response);
-                        updateDisplay();
-                    }
-                },
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Toast.makeText(MainActivity.this,retrofitError.getMessage(),Toast.LENGTH_LONG).show();
 
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError ex) {
-                        Toast.makeText(MainActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
-
-                    }
-                });
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(request);
-
+            }
+        });
     }
 
     protected void updateDisplay() {
@@ -112,5 +103,4 @@ public class MainActivity extends ActionBarActivity {
 
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
-
 }

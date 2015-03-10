@@ -12,10 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
@@ -30,7 +27,6 @@ public class FlowerAdapter extends ArrayAdapter<Flower> {
     private List<Flower> flowerList;
     ViewHolder holder = null;
 
-    private OkHttpClient client = new OkHttpClient();
 
     public FlowerAdapter(Context context, int resource, List<Flower> items) {
         super(context, resource, items);
@@ -102,9 +98,7 @@ public class FlowerAdapter extends ArrayAdapter<Flower> {
 
             try{
                 String imageUrl = MainActivity.PHOTOS_BASE_URL + flower.getPhoto();
-
-                HttpURLConnection con = client.open(new URL(imageUrl));
-                InputStream in = con.getInputStream();
+                InputStream in = (InputStream) new URL(imageUrl).getContent();
                 Bitmap bitmap = BitmapFactory.decodeStream(in);
                 flower.setBitmap(bitmap);
                 in.close();
