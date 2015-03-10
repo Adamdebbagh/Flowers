@@ -3,6 +3,7 @@ package tekwin.org.catalog;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -25,6 +26,16 @@ public class HttpManager {
             URL url = new URL(uri);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(p.getMethod());
+
+            if (p.getMethod().equals("POST")){
+                con.setDoOutput(true);
+                OutputStreamWriter writer =new OutputStreamWriter(con.getOutputStream());
+                writer.write(p.getEncodedParams());
+                writer.flush();
+
+
+            }
+
             //get Content from the web
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));

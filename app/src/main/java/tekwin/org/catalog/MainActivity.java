@@ -71,12 +71,17 @@ public class MainActivity extends ActionBarActivity {
     private void requestData(String uri) {
 
         RequestPackage p = new RequestPackage();
-        p.setMethod("GET");
+        p.setMethod("POST");
         p.setUri(uri);
-        p.setParam("rose","12.09");
-        p.setParam("jasmin","3.7");
-        p.setParam("param3","9");
-        p.setParam("param4","value4");
+        p.setParam("name","Rosa");
+        p.setParam("price","13.7");
+        p.setParam("name","Jasmin");
+        p.setParam("price","14.0");
+        p.setParam("name","rome");
+        p.setParam("price","11");
+        p.setParam("name","extinct");
+        p.setParam("price","15.0");
+
 
         MyTask task = new MyTask();
         //Parallel Task Processing
