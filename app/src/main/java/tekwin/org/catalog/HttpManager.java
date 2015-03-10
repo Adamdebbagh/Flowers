@@ -2,6 +2,8 @@ package tekwin.org.catalog;
 
 import android.util.Base64;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +21,8 @@ public class HttpManager {
 
         try {
             URL url = new URL(uri);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
+            OkHttpClient client = new OkHttpClient();
+            HttpURLConnection con = client.open(url);
             //get Content from the web
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
