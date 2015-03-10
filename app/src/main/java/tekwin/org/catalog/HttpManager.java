@@ -6,19 +6,25 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import tekwin.org.RequestPackage;
+
 /**
  * Created by adamdebbagh on 2/28/15.
  */
 public class HttpManager {
 
-    public static String getData(String uri){
+    public static String getData(RequestPackage p){
 
         BufferedReader reader = null;
+        String uri = p.getUri();
+        if (p.getMethod().equals("GET")){
+            uri += "?" + p.getEncodedParams();
+        }
 
         try {
             URL url = new URL(uri);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
+            con.setRequestMethod(p.getMethod());
             //get Content from the web
             StringBuilder sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));

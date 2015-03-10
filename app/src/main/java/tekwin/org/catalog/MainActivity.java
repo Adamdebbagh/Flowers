@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import tekwin.org.RequestPackage;
 import tekwin.org.model.Flower;
 
 
@@ -56,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_get_data) {
             if (isOnline()) {
-                requestData("http://services.hanselandpetal.com/feeds/flowers.json");
+                requestData("http://services.hanselandpetal.com/restful.php");
             }else
             {
                 Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();
@@ -68,9 +69,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void requestData(String uri) {
+
+        RequestPackage p = new RequestPackage();
+        p.setMethod("GET");
+        p.setUri(uri);
+        p.setParam("rose","12.09");
+        p.setParam("jasmin","3.7");
+        p.setParam("param3","9");
+        p.setParam("param4","value4");
+
         MyTask task = new MyTask();
         //Parallel Task Processing
-        task.execute(uri);
+        task.execute(p);
     }
 
     protected void updateDisplay(String message) {
@@ -84,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    private class MyTask extends AsyncTask<String,String,String> {
+    private class MyTask extends AsyncTask<RequestPackage,String,String> {
 
 
         @Override
@@ -99,7 +109,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(RequestPackage... params) {
 
            String content = HttpManager.getData(params[0]);
 
