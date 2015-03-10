@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_get_data) {
             if (isOnline()) {
-                requestData("http://services.hanselandpetal.com/restful.php");
+                requestData("http://services.hanselandpetal.com/restfuljson.php");
             }else
             {
                 Toast.makeText(this,"Network isn't available",Toast.LENGTH_LONG).show();

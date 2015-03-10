@@ -1,5 +1,7 @@
 package tekwin.org.catalog;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,10 +29,13 @@ public class HttpManager {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod(p.getMethod());
 
+            JSONObject json = new JSONObject(p.getParams());
+            String params = "params=" + json.toString();
+
             if (p.getMethod().equals("POST")){
                 con.setDoOutput(true);
                 OutputStreamWriter writer =new OutputStreamWriter(con.getOutputStream());
-                writer.write(p.getEncodedParams());
+                writer.write(params);
                 writer.flush();
 
 
